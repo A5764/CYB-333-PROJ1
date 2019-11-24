@@ -1,0 +1,102 @@
+#The Goal of this project is to provide a solution to reading Scapy generated PCAP files in Python.  In addistion we will be looking at some of the Scapy automation features.
+
+
+
+#PART 1)
+
+# Importing the Scapy Utilities do we can read the file we did in week 2.
+
+from scapy.all import *
+
+pcap_file = "scapy3.pcap"
+
+#The rdpcap fuction reads the contents of thee Pcap file.
+
+packets = rdpcap(pcap_file)
+
+for packet in packets:
+
+#Print the content of the file.
+
+    print(packet.summary())
+
+
+#PART 2)
+
+#If you wanted to fileter out the PCAP file for traffic to HTTPS you would them sepcify the following:
+
+
+def filtering_sample(scapy3.pcap): # name is "xxxxxx.pcap"
+
+    def filter(p): return TCP in p and p[TCP].dport == 443
+    packets = rdpcap(name).filter(filter)
+
+    for packet in packets:
+        print(packet.summary())
+
+
+
+#PART 3)
+
+# We could also setup our own Scapy specify entries, instead of importing the PCAP file.
+#I could change the destination address to multple addresses if I wanted to. 
+
+
+
+src = "192.168.0.2"
+
+dst = "192.168.0.3"
+
+#Set a radom well kown port.
+
+sport = random.randint(1024,65535)
+
+dport = int("443")
+
+
+#PART 4)
+
+# Building packets to send google and you can view the RAW packets.
+
+p = IP(dst = 'www.google.com') / TCP(dport = 80) / Raw(b'Raw Data')
+
+
+#sends packets without custom ether() layer and waits for first answer 
+
+sr1(p)
+
+
+
+
+#PART 5)
+
+#A uselful tool in troubleshooting is the PING command, 
+
+import logging
+from scapy.all import *
+
+dstip = raw_input("ENter the IP for an address to test... ")
+
+# Create a basic ICMP Header
+
+icmp = ICMP()
+icmp = type=8
+icmp.code=0
+
+#Create a basic IP header
+
+ip=IP()
+ip.dst=dstip
+
+#Send the data.
+
+p=sr1(ip/icmp,timeout=5,verbose=0)
+	if(p):
+		print "IP is UP"
+
+#Adding the else statement in case the ping failes.
+	else:
+		print "IP is Down"
+
+
+
